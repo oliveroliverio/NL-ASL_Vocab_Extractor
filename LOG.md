@@ -136,3 +136,17 @@ FEAT: Render incrementing number badges on top-right of each image on the card
 
 **Terminal Commands Run:**
 - None
+
+## [FEAT] Copy final card and filename to system clipboard
+
+**Commit Message:**
+FEAT: Automatically copy generated card image and its filename to macOS system clipboard
+
+- Replaced clipboard purge code with PyObjC `NSPasteboard` writing logic.
+- Configured Cocoa pasteboard to store the final image data as `NSPasteboardTypeTIFF` and the filename string as `NSPasteboardTypeString` simultaneously, enabling seamless pasting as either text or image depending on the target app.
+
+**Files Changed:**
+- `extractVocabASL.py` (Modified)
+
+**Terminal Commands Run:**
+- None

@@ -258,11 +258,22 @@ def hotkey_mode():
                 print(f"Created card: {output_path.name}")
                 refresh_gallery()
                 
-                # Purge clipboard
+                # Copy the generated card image and its filename to the system clipboard
                 try:
-                    subprocess.run("pbcopy < /dev/null", shell=True)
-                except Exception:
-                    pass
+                    from AppKit import NSPasteboard, NSPasteboardTypeTIFF, NSPasteboardTypeString, NSImage
+
+                    image = NSImage.alloc().initByReferencingFile_(str(output_path))
+                    if image:
+                        tiff_data = image.TIFFRepresentation()
+                        if tiff_data:
+                            pb = NSPasteboard.generalPasteboard()
+                            pb.clearContents()
+                            pb.declareTypes_owner_([NSPasteboardTypeTIFF, NSPasteboardTypeString], None)
+                            pb.setData_forType_(tiff_data, NSPasteboardTypeTIFF)
+                            pb.setString_forType_(filename, NSPasteboardTypeString)
+                            print(f"Copied card image and filename '{filename}' to system clipboard!")
+                except Exception as clipboard_err:
+                    print(f"Failed to copy final card to clipboard: {clipboard_err}")
             else:
                 print("Ingest cancelled. Discarding screenshots.")
         except Exception as e:
