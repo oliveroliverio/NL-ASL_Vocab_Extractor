@@ -108,3 +108,17 @@ BUGFIX: Use borderless geometry and convert screen capture to RGB in coordinate 
 
 **Terminal Commands Run:**
 - None
+
+## [BUGFIX] Add countdown before calibration capture and revert to native fullscreen on macOS
+
+**Commit Message:**
+BUGFIX: Add 3-second countdown before screen grab and use native fullscreen for macOS focus
+
+- Added 3-second countdown to `calibrate_coords` to give the user time to bring Chrome to front.
+- Reverted to macOS native fullscreen mode (`self.root.attributes("-fullscreen", True)`) in coordinate selector to correctly steal active window focus and allow Escape key binding to close the overlay.
+
+**Files Changed:**
+- `extractVocabASL.py` (Modified)
+
+**Terminal Commands Run:**
+- None

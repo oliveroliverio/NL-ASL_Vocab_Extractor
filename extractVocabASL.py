@@ -59,9 +59,15 @@ def save_coords(x1, y1, x2, y2):
 
 def calibrate_coords():
     print("\nCalibration Mode:")
-    print("A dimmed screen capture overlay will open.")
-    print("Click and drag a rectangle over the video player / signing region.")
-    print("Release to confirm. Press Escape (if overlay is focused) to exit without saving.")
+    print("1. Switch to your Chrome window (ensure the video player is visible).")
+    print("2. A screenshot will be captured in 3 seconds to use for alignment.")
+    print("3. Draw a rectangle over the video player region to calibrate.")
+    print("Press Escape on the overlay screen to cancel without saving.")
+
+    import time
+    for i in range(3, 0, -1):
+        print(f"Starting in {i}...")
+        time.sleep(1)
 
     try:
         import tkinter as tk
@@ -72,7 +78,7 @@ def calibrate_coords():
         return
 
     try:
-        # Take screen capture before showing the overlay
+        # Take screen capture after the countdown when Chrome is active
         screen_img = ImageGrab.grab()
 
         class Selector:
@@ -80,19 +86,18 @@ def calibrate_coords():
                 self.root = tk.Tk()
                 self.root.config(cursor="cross")
 
-                # Get logical dimensions
-                logical_w = self.root.winfo_screenwidth()
-                logical_h = self.root.winfo_screenheight()
-
-                # Use borderless geometry instead of macOS native fullscreen (to avoid desktop swiping)
-                self.root.overrideredirect(True)
-                self.root.geometry(f"{logical_w}x{logical_h}+0+0")
+                # Use macOS native fullscreen to open overlay directly on top of fullscreen apps and capture focus
+                self.root.attributes("-fullscreen", True)
                 
                 # Bring window to absolute front
                 self.root.lift()
                 self.root.focus_force()
 
                 self.root.bind("<Escape>", lambda e: self.root.destroy())
+
+                # Get logical dimensions
+                logical_w = self.root.winfo_screenwidth()
+                logical_h = self.root.winfo_screenheight()
 
                 # Resize screen capture to match logical screen dimensions (Retina scaling)
                 try:
