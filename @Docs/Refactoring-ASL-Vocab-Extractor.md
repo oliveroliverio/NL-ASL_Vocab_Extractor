@@ -69,7 +69,7 @@ We updated `src/asl_vocab/card_renderer.py` to support layout configurations for
 
 ### Step 8: Coordinate-Based Capture & Global Hotkey (Option B)
 We refactored `extractVocabASL.py` to use a global hotkey capture workflow:
-1. **Calibration Mode (`--calibrate`)**: Running `extractVocabASL --calibrate` opens a transparent fullscreen Tkinter window where you click-and-drag a red selection rectangle over your video player box. The `(x1, y1, x2, y2)` coordinates are saved locally to `.asl_vocab_coords.json` (ignored in `.gitignore`).
+1. **Calibration Mode (`--calibrate`)**: Running `extractVocabASL --calibrate` starts a 3-second countdown, giving you time to switch focus to Chrome. After the countdown, a fullscreen dimmed screen capture Tkinter window opens where you click-and-drag a red selection rectangle over your video player box. The `(x1, y1, x2, y2)` coordinates are saved locally to `.asl_vocab_coords.json` (ignored in `.gitignore`).
 2. **Global Hotkey listener**: When running, the script runs a background `pynput` listener. You press `F8` from inside Chrome to capture the calibrated region automatically.
 3. **Beep Indicator**: Plays a system sound (`afplay Tink.aiff`) on each capture.
 4. **Draft Preview**: Once the screenshot limit is reached, a draft layout containing the string `"PREVIEW"` is created and opened via macOS `open`.
@@ -84,7 +84,7 @@ First, set up Chrome and open the video player. Run the calibration command:
 ```bash
 extractVocabASL --calibrate
 ```
-Drag the box over the video player region and release.
+You will see a 3-second countdown. Focus your Chrome window immediately. Once the overlay opens, drag the box over the video player region and release.
 
 ### 2. Run Ingestion (from anywhere)
 Start the tool from your terminal:
