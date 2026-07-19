@@ -78,3 +78,19 @@ FEAT: Implement coordinate calibration, F8 global hotkey capture, and AppleScrip
 
 **Terminal Commands Run:**
 - `uv sync`
+
+## [BUGFIX] Display screen capture as overlay background in coordinate selector
+
+**Commit Message:**
+BUGFIX: Use screen capture as Tkinter selector background to solve black overlay bug on macOS
+
+- Replaced semi-transparent root alpha window attribute with a static fullscreen screenshot background.
+- Dimmed the screenshot background image using PIL blend.
+- Added Retina scaling support by resizing the background screenshot to logical screen dimensions.
+- Added `lift()` and `focus_force()` to ensure overlay opens in front of other apps.
+
+**Files Changed:**
+- `extractVocabASL.py` (Modified)
+
+**Terminal Commands Run:**
+- None

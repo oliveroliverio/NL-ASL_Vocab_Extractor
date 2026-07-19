@@ -6,7 +6,7 @@ import os
 import subprocess
 import threading
 from pathlib import Path
-from PIL import ImageGrab
+from PIL import ImageGrab, Image, ImageTk
 
 from asl_vocab.config import CARD_OUTPUT_DIR, GALLERY_OUTPUT_PATH, unit_slug
 from asl_vocab.card_renderer import render_card
@@ -59,7 +59,7 @@ def save_coords(x1, y1, x2, y2):
 
 def calibrate_coords():
     print("\nCalibration Mode:")
-    print("A semi-transparent screen overlay will open.")
+    print("A dimmed screen capture overlay will open.")
     print("Click and drag a rectangle over the video player / signing region.")
     print("Release to confirm. Press Escape (if overlay is focused) to exit without saving.")
 
@@ -72,17 +72,42 @@ def calibrate_coords():
         return
 
     try:
+        # Take screen capture before showing the overlay
+        screen_img = ImageGrab.grab()
+
         class Selector:
             def __init__(self):
                 self.root = tk.Tk()
-                self.root.attributes("-alpha", 0.35)
                 self.root.attributes("-fullscreen", True)
                 self.root.config(cursor="cross")
+                
+                # Bring window to absolute front
+                self.root.lift()
+                self.root.focus_force()
 
                 self.root.bind("<Escape>", lambda e: self.root.destroy())
 
-                self.canvas = tk.Canvas(self.root, cursor="cross", bg="gray20")
+                # Get logical dimensions
+                logical_w = self.root.winfo_screenwidth()
+                logical_h = self.root.winfo_screenheight()
+
+                # Resize screen capture to match logical screen dimensions (Retina scaling)
+                try:
+                    resample_mode = Image.Resampling.LANCZOS
+                except AttributeError:
+                    resample_mode = Image.ANTIALIAS
+                
+                resized_img = screen_img.resize((logical_w, logical_h), resample_mode)
+                
+                # Blend screen image with 30% black to dim it for selection mode
+                dimmed_img = Image.blend(resized_img, Image.new("RGB", resized_img.size, "black"), 0.3)
+                
+                self.bg_photo = ImageTk.PhotoImage(dimmed_img)
+
+                self.canvas = tk.Canvas(self.root, cursor="cross", highlightthickness=0)
                 self.canvas.pack(fill="both", expand=True)
+                
+                self.canvas.create_image(0, 0, image=self.bg_photo, anchor="nw")
 
                 self.canvas.bind("<ButtonPress-1>", self.on_press)
                 self.canvas.bind("<B1-Motion>", self.on_drag)
