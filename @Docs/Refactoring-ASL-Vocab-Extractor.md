@@ -43,6 +43,25 @@ chmod +x /Users/mbp-14/.local/bin/extractVocabASL
 ### Step 5: Update References
 We updated the references in `README.md` to point to the new `extractVocabASL.py` and documented the global command `extractVocabASL`.
 
+### Step 6: Refactor Number of Images Option to Interactive Prompt
+We replaced the command-line argument `-n` / `--num-images` with an interactive console question with a default of 2. The user is prompted for the number of images to ingest (1-4) at the start of ingestion:
+```python
+    # Prompt for number of images
+    num_images = 2
+    while True:
+        val = input("Number of images (1-4, default: 2): ").strip()
+        if not val:
+            break
+        try:
+            num = int(val)
+            if 1 <= num <= 4:
+                num_images = num
+                break
+        except ValueError:
+            pass
+        print("Invalid input. Please enter a number between 1 and 4, or press Enter for the default.")
+```
+
 ---
 
 ## Usage

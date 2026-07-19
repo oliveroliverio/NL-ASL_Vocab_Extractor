@@ -22,3 +22,19 @@ REFACTOR: Rename ingest_ASL_vocab_image.py to extractVocabASL.py and make execut
 - `git mv ingest_ASL_vocab_image.py extractVocabASL.py`
 - `chmod +x extractVocabASL.py`
 - `chmod +x /Users/mbp-14/.local/bin/extractVocabASL`
+
+## [REFACTOR] Move number of images option from CLI argument to interactive console prompt
+
+**Commit Message:**
+REFACTOR: Prompt for number of images in console instead of using -n/--num-images argument
+
+- Removed `-n` / `--num-images` from `argparse` in `extractVocabASL.py`.
+- Refactored `clipboard_mode` to prompt for `num_images` interactively on start, defaulting to 2 when Enter is pressed.
+- Updated `@Docs/Refactoring-ASL-Vocab-Extractor.md` to document the interactive prompt step.
+
+**Files Changed:**
+- `extractVocabASL.py` (Modified)
+- `@Docs/Refactoring-ASL-Vocab-Extractor.md` (Modified)
+
+**Terminal Commands Run:**
+- None

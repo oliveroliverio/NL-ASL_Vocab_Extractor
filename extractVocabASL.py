@@ -44,8 +44,23 @@ def get_clipboard_image():
     return img.convert("RGB")
 
 
-def clipboard_mode(num_images: int):
+def clipboard_mode():
     print("\nASL Vocab Image Ingest\n")
+
+    # Prompt for number of images
+    num_images = 2
+    while True:
+        val = input("Number of images (1-4, default: 2): ").strip()
+        if not val:
+            break
+        try:
+            num = int(val)
+            if 1 <= num <= 4:
+                num_images = num
+                break
+        except ValueError:
+            pass
+        print("Invalid input. Please enter a number between 1 and 4, or press Enter for the default.")
 
     images = []
 
@@ -82,15 +97,6 @@ def main():
     )
 
     parser.add_argument(
-        "-n",
-        "--num-images",
-        type=int,
-        choices=[1, 2, 3, 4],
-        default=2,
-        help="Number of screenshots/images to include in the card.",
-    )
-
-    parser.add_argument(
         "--refresh-gallery",
         action="store_true",
         help="Regenerate GALLERY.md from existing cards.",
@@ -102,7 +108,7 @@ def main():
         refresh_gallery()
         return
 
-    clipboard_mode(num_images=args.num_images)
+    clipboard_mode()
 
 
 if __name__ == "__main__":
