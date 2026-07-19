@@ -16,7 +16,7 @@ Here is how data flows through the application:
 
 ```mermaid
 graph TD
-    Clipboard[System Clipboard] -->|ImageGrab| IngestScript[ingest_ASL_vocab_image.py]
+    Clipboard[System Clipboard] -->|ImageGrab| IngestScript[extractVocabASL.py]
     UserPrompt[User Console Input: Word/Phrase] --> IngestScript
     IngestScript -->|images, word, output_path| CardRenderer[card_renderer.py]
     CardRenderer -->|Pil.ImageDraw & Font| CardFile[Generated Card PNG in data/asl_vocab/cards/]
@@ -34,13 +34,19 @@ Prerequisites: `uv` (Fast Python Package Installer and Manager) and Python 3.13+
    ```
 2. Run the ingestion tool:
    ```bash
-   uv run python ingest_ASL_vocab_image.py
+   uv run python extractVocabASL.py
    ```
    Follow the prompts to capture screenshots to clipboard and enter the vocabulary word.
 
 3. To refresh the galleries without capturing new images:
    ```bash
-   uv run python ingest_ASL_vocab_image.py --refresh-gallery
+   uv run python extractVocabASL.py --refresh-gallery
+   ```
+
+4. Global execution (run from anywhere):
+   Since the wrapper script `extractVocabASL` is installed in your `PATH` (under `~/.local/bin/`), you can invoke the tool directly from any directory:
+   ```bash
+   extractVocabASL
    ```
 
 ## Roadmap Features
