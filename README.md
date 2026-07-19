@@ -32,21 +32,34 @@ Prerequisites: `uv` (Fast Python Package Installer and Manager) and Python 3.13+
    ```bash
    uv sync
    ```
-2. Run the ingestion tool:
+2. Calibrate Screen Coordinates:
+   Before running the tool, you need to calibrate the bounding box coordinates of your video player/signing region in Chrome. Run the calibration command:
    ```bash
-   uv run python extractVocabASL.py
+   extractVocabASL --calibrate
+   # or locally:
+   uv run python extractVocabASL.py --calibrate
    ```
-   Follow the prompts to capture screenshots to clipboard and enter the vocabulary word.
+   - When launched, you will see a 3-second countdown.
+   - **Immediately switch focus to Chrome** and make sure the video player is visible.
+   - Once the dimmed screen capture overlay opens, click and drag a red selection rectangle over the video player region, then release. The coordinates will be saved.
 
-3. To refresh the galleries without capturing new images:
-   ```bash
-   uv run python extractVocabASL.py --refresh-gallery
-   ```
-
-4. Global execution (run from anywhere):
-   Since the wrapper script `extractVocabASL` is installed in your `PATH` (under `~/.local/bin/`), you can invoke the tool directly from any directory:
+3. Run Ingestion (Globally or Locally):
+   Since the wrapper script is in your `PATH` (under `~/.local/bin/`), you can invoke the tool directly from any directory:
    ```bash
    extractVocabASL
+   # or locally:
+   uv run python extractVocabASL.py
+   ```
+   - Enter the number of images you want to use (1-6, default: 2).
+   - Switch to Chrome and scrub your video.
+   - Press **`F8`** globally (while inside Chrome) to capture the calibrated region for each image. (A system beep sound will play upon each capture).
+   - Once the target number of screenshots is reached, a draft card image will automatically open in **Preview.app** for review, and a macOS dialog will pop up asking for the vocabulary word.
+   - Type the word and press `Enter` to finalize the card (or click Cancel to discard).
+
+4. Refresh galleries:
+   To regenerate galleries from existing cards without taking new screenshots:
+   ```bash
+   extractVocabASL --refresh-gallery
    ```
 
 ## Roadmap Features
