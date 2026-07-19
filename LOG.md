@@ -122,3 +122,17 @@ BUGFIX: Add 3-second countdown before screen grab and use native fullscreen for 
 
 **Terminal Commands Run:**
 - None
+
+## [FEAT] Add incrementing number badges on card images
+
+**Commit Message:**
+FEAT: Render incrementing number badges on top-right of each image on the card
+
+- Created `draw_image_number` helper in `src/asl_vocab/card_renderer.py` to draw a clean circular badge with the image sequence number (1, 2, 3, etc.).
+- Integrated the drawing loop at the end of the `render_card` function to dynamically place numbers on all images based on their positions.
+
+**Files Changed:**
+- `src/asl_vocab/card_renderer.py` (Modified)
+
+**Terminal Commands Run:**
+- None

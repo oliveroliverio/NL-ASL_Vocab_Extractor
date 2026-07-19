@@ -77,6 +77,45 @@ def draw_border(draw: ImageDraw.ImageDraw):
         )
 
 
+def draw_image_number(
+    draw: ImageDraw.ImageDraw,
+    number: int,
+    pos: tuple[int, int],
+    size: tuple[int, int],
+):
+    # Calculate top-right corner of the image box
+    x = pos[0] + size[0]
+    y = pos[1]
+
+    # Badge radius / size
+    radius = 18
+    # Center of the circle: offset slightly inside the top-right corner of the image
+    center_x = x - radius - 12
+    center_y = y + radius + 12
+
+    # Draw filled circle with border
+    draw.ellipse(
+        [center_x - radius, center_y - radius, center_x + radius, center_y + radius],
+        fill="white",
+        outline="black",
+        width=2,
+    )
+
+    # Use Arial Bold or custom font size 22
+    font = get_font(22)
+
+    # Draw the number text centered in the circle
+    text = str(number)
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_w = bbox[2] - bbox[0]
+    text_h = bbox[3] - bbox[1]
+
+    text_x = center_x - text_w // 2
+    text_y = center_y - text_h // 2 - 2
+
+    draw.text((text_x, text_y), text, fill="black", font=font)
+
+
 def render_card(
     word: str,
     images: list[str | Path | Image.Image],
@@ -98,6 +137,8 @@ def render_card(
     draw = ImageDraw.Draw(card)
 
     loaded_images = [load_image(img) for img in images]
+    positions = []
+    image_size = (0, 0)
 
     # 1 image: centered, old behavior
     if len(loaded_images) == 1:
@@ -106,13 +147,13 @@ def render_card(
             (layout.image_width, layout.image_height),
         )
 
-        card.paste(
-            img,
-            (
-                (layout.card_width - layout.image_width) // 2,
-                140,
-            ),
+        pos = (
+            (layout.card_width - layout.image_width) // 2,
+            140,
         )
+        card.paste(img, pos)
+        positions = [pos]
+        image_size = (layout.image_width, layout.image_height)
 
         draw.text(
             (layout.margin + 10, layout.card_height - 250),
@@ -132,15 +173,15 @@ def render_card(
             (layout.image_width, layout.image_height),
         )
 
-        card.paste(img1, (layout.margin, layout.margin))
-
-        card.paste(
-            img2,
-            (
-                layout.card_width - layout.image_width - layout.margin,
-                layout.card_height - layout.image_height - layout.margin,
-            ),
+        pos1 = (layout.margin, layout.margin)
+        pos2 = (
+            layout.card_width - layout.image_width - layout.margin,
+            layout.card_height - layout.image_height - layout.margin,
         )
+        card.paste(img1, pos1)
+        card.paste(img2, pos2)
+        positions = [pos1, pos2]
+        image_size = (layout.image_width, layout.image_height)
 
         draw.text(
             (layout.margin + 10, layout.card_height - 250),
@@ -159,6 +200,7 @@ def render_card(
             (layout.margin * 2 + tile_w, layout.margin),
             (layout.margin, layout.margin * 2 + tile_h),
         ]
+        image_size = (tile_w, tile_h)
 
         for img_source, pos in zip(loaded_images, positions):
             img = fit_image(img_source, (tile_w, tile_h))
@@ -195,6 +237,7 @@ def render_card(
             (layout.margin, layout.margin * 2 + tile_h),
             (layout.margin * 2 + tile_w, layout.margin * 2 + tile_h),
         ]
+        image_size = (tile_w, tile_h)
 
         for img_source, pos in zip(loaded_images, positions):
             img = fit_image(img_source, (tile_w, tile_h))
@@ -226,6 +269,7 @@ def render_card(
             (layout.margin, layout.margin * 2 + tile_h),
             (layout.margin * 2 + tile_w, layout.margin * 2 + tile_h),
         ]
+        image_size = (tile_w, tile_h)
 
         for img_source, pos in zip(loaded_images, positions):
             img = fit_image(img_source, (tile_w, tile_h))
@@ -264,6 +308,7 @@ def render_card(
             (layout.margin * 2 + tile_w, layout.margin * 2 + tile_h),
             (layout.margin * 3 + tile_w * 2, layout.margin * 2 + tile_h),
         ]
+        image_size = (tile_w, tile_h)
 
         for img_source, pos in zip(loaded_images, positions):
             img = fit_image(img_source, (tile_w, tile_h))
@@ -282,6 +327,10 @@ def render_card(
             box=text_box,
             max_font_size=layout.font_size,
         )
+
+    # Draw image numbers on top right of each image
+    for idx, pos in enumerate(positions):
+        draw_image_number(draw, idx + 1, pos, image_size)
 
     draw_border(draw)
 
