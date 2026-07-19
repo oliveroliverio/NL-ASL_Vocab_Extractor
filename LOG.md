@@ -94,3 +94,17 @@ BUGFIX: Use screen capture as Tkinter selector background to solve black overlay
 
 **Terminal Commands Run:**
 - None
+
+## [BUGFIX] Prevent native macOS fullscreen desktop swiping and PIL blend mode mismatch
+
+**Commit Message:**
+BUGFIX: Use borderless geometry and convert screen capture to RGB in coordinate selector
+
+- Replaced native Tkinter fullscreen window mode with borderless geometry `overrideredirect(True)` and screen size calculation to avoid swiping to a new macOS desktop space.
+- Added `convert("RGB")` to screenshot image before resizing to prevent `images do not match` mode mismatch errors in `Image.blend`.
+
+**Files Changed:**
+- `extractVocabASL.py` (Modified)
+
+**Terminal Commands Run:**
+- None

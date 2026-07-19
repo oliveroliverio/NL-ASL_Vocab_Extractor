@@ -78,8 +78,15 @@ def calibrate_coords():
         class Selector:
             def __init__(self):
                 self.root = tk.Tk()
-                self.root.attributes("-fullscreen", True)
                 self.root.config(cursor="cross")
+
+                # Get logical dimensions
+                logical_w = self.root.winfo_screenwidth()
+                logical_h = self.root.winfo_screenheight()
+
+                # Use borderless geometry instead of macOS native fullscreen (to avoid desktop swiping)
+                self.root.overrideredirect(True)
+                self.root.geometry(f"{logical_w}x{logical_h}+0+0")
                 
                 # Bring window to absolute front
                 self.root.lift()
@@ -87,17 +94,14 @@ def calibrate_coords():
 
                 self.root.bind("<Escape>", lambda e: self.root.destroy())
 
-                # Get logical dimensions
-                logical_w = self.root.winfo_screenwidth()
-                logical_h = self.root.winfo_screenheight()
-
                 # Resize screen capture to match logical screen dimensions (Retina scaling)
                 try:
                     resample_mode = Image.Resampling.LANCZOS
                 except AttributeError:
                     resample_mode = Image.ANTIALIAS
                 
-                resized_img = screen_img.resize((logical_w, logical_h), resample_mode)
+                # Convert screenshot to RGB to avoid mode mismatch errors during blending
+                resized_img = screen_img.convert("RGB").resize((logical_w, logical_h), resample_mode)
                 
                 # Blend screen image with 30% black to dim it for selection mode
                 dimmed_img = Image.blend(resized_img, Image.new("RGB", resized_img.size, "black"), 0.3)
