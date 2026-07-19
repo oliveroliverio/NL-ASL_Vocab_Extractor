@@ -3,10 +3,10 @@
 This is a standalone tool extracted from the `L-Mnemo2` project. It is designed to capture screenshots of sign language from the clipboard, construct flashcard images (by layouts), and automatically update Markdown galleries representing vocabulary sheets.
 
 ## Rationale & Goal
-Managing vocabulary flashcards manually is slow and error-prone. This tool automates the creation of cards with 1 to 4 images, automatically scaling and drawing the word on the card, and dynamically maintaining visual galleries that can be viewed directly in markdown viewers (like GitHub or Obsidian).
+Managing vocabulary flashcards manually is slow and error-prone. This tool automates the creation of cards with 1 to 6 images, automatically scaling and drawing the word on the card, and dynamically maintaining visual galleries that can be viewed directly in markdown viewers (like GitHub or Obsidian).
 
 ## Main Features
-- **Flexible Image Layouts**: Supports layouts for 1, 2, 3, or 4 images on a single card.
+- **Flexible Image Layouts**: Supports layouts for 1, 2, 3, 4, 5, or 6 images on a single card.
 - **Clipboard Integration**: Grabs screenshots directly from the clipboard (`Shift-Control-Command-4` on macOS).
 - **Auto-slugification**: Creates filenames automatically based on unit number, word/phrase slug, and timestamp.
 - **Dynamic Gallery Generation**: Automatically generates and updates index galleries and unit-specific galleries.

@@ -44,23 +44,28 @@ chmod +x /Users/mbp-14/.local/bin/extractVocabASL
 We updated the references in `README.md` to point to the new `extractVocabASL.py` and documented the global command `extractVocabASL`.
 
 ### Step 6: Refactor Number of Images Option to Interactive Prompt
-We replaced the command-line argument `-n` / `--num-images` with an interactive console question with a default of 2. The user is prompted for the number of images to ingest (1-4) at the start of ingestion:
+We replaced the command-line argument `-n` / `--num-images` with an interactive console question with a default of 2. The user is prompted for the number of images to ingest (1-6) at the start of ingestion:
 ```python
     # Prompt for number of images
     num_images = 2
     while True:
-        val = input("Number of images (1-4, default: 2): ").strip()
+        val = input("Number of images (1-6, default: 2): ").strip()
         if not val:
             break
         try:
             num = int(val)
-            if 1 <= num <= 4:
+            if 1 <= num <= 6:
                 num_images = num
                 break
         except ValueError:
             pass
-        print("Invalid input. Please enter a number between 1 and 4, or press Enter for the default.")
+        print("Invalid input. Please enter a number between 1 and 6, or press Enter for the default.")
 ```
+
+### Step 7: Update Card Renderer for 5 and 6 Images
+We updated `src/asl_vocab/card_renderer.py` to support layout configurations for 5 and 6 images:
+- **5 images**: Arranged in a 3x2 grid with the 6th slot (bottom-right) reserved for the centered vocabulary word.
+- **6 images**: Arranged in a 3x2 grid with all 6 slots filled with images and the word displayed in a dedicated text band at the bottom.
 
 ---
 

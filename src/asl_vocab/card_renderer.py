@@ -84,8 +84,8 @@ def render_card(
 ) -> Path:
     layout = ASL_VOCAB_LAYOUT
 
-    if len(images) not in {1, 2, 3, 4}:
-        raise ValueError("render_card supports 1, 2, 3, or 4 images.")
+    if len(images) not in {1, 2, 3, 4, 5, 6}:
+        raise ValueError("render_card supports 1, 2, 3, 4, 5, or 6 images.")
 
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -194,6 +194,75 @@ def render_card(
             (layout.margin * 2 + tile_w, layout.margin),
             (layout.margin, layout.margin * 2 + tile_h),
             (layout.margin * 2 + tile_w, layout.margin * 2 + tile_h),
+        ]
+
+        for img_source, pos in zip(loaded_images, positions):
+            img = fit_image(img_source, (tile_w, tile_h))
+            card.paste(img, pos)
+
+        text_box = (
+            layout.margin,
+            layout.card_height - text_band_h,
+            layout.card_width - layout.margin,
+            layout.card_height - layout.margin,
+        )
+
+        draw_centered_text(
+            draw=draw,
+            text=word,
+            box=text_box,
+            max_font_size=layout.font_size,
+        )
+
+    # 5 images: 3x2 grid, bottom-right blank space used for the word
+    elif len(loaded_images) == 5:
+        tile_w = (layout.card_width - (layout.margin * 4)) // 3
+        tile_h = (layout.card_height - (layout.margin * 3)) // 2
+
+        positions = [
+            (layout.margin, layout.margin),
+            (layout.margin * 2 + tile_w, layout.margin),
+            (layout.margin * 3 + tile_w * 2, layout.margin),
+            (layout.margin, layout.margin * 2 + tile_h),
+            (layout.margin * 2 + tile_w, layout.margin * 2 + tile_h),
+        ]
+
+        for img_source, pos in zip(loaded_images, positions):
+            img = fit_image(img_source, (tile_w, tile_h))
+            card.paste(img, pos)
+
+        text_box = (
+            layout.margin * 3 + tile_w * 2,
+            layout.margin * 2 + tile_h,
+            layout.card_width - layout.margin,
+            layout.card_height - layout.margin,
+        )
+
+        draw_centered_text(
+            draw=draw,
+            text=word,
+            box=text_box,
+            max_font_size=layout.font_size,
+        )
+
+    # 6 images: 3x2 grid, word in bottom text band
+    elif len(loaded_images) == 6:
+        text_band_h = 120
+
+        tile_w = (layout.card_width - (layout.margin * 4)) // 3
+        tile_h = (
+            layout.card_height
+            - text_band_h
+            - (layout.margin * 3)
+        ) // 2
+
+        positions = [
+            (layout.margin, layout.margin),
+            (layout.margin * 2 + tile_w, layout.margin),
+            (layout.margin * 3 + tile_w * 2, layout.margin),
+            (layout.margin, layout.margin * 2 + tile_h),
+            (layout.margin * 2 + tile_w, layout.margin * 2 + tile_h),
+            (layout.margin * 3 + tile_w * 2, layout.margin * 2 + tile_h),
         ]
 
         for img_source, pos in zip(loaded_images, positions):

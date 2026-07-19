@@ -38,3 +38,22 @@ REFACTOR: Prompt for number of images in console instead of using -n/--num-image
 
 **Terminal Commands Run:**
 - None
+
+## [REFACTOR] Support up to 6 images in card layout and update console prompt
+
+**Commit Message:**
+REFACTOR: Support up to 6 images in card renderer layouts and update console prompt range to 1-6
+
+- Modified `src/asl_vocab/card_renderer.py` to allow rendering 5 or 6 images.
+- Added 3x2 grid layouts for 5 and 6 images.
+- Updated `extractVocabASL.py` prompt text and range validation to support 1-6 images.
+- Updated `README.md` and documentation in `@Docs/Refactoring-ASL-Vocab-Extractor.md`.
+
+**Files Changed:**
+- `src/asl_vocab/card_renderer.py` (Modified)
+- `extractVocabASL.py` (Modified)
+- `README.md` (Modified)
+- `@Docs/Refactoring-ASL-Vocab-Extractor.md` (Modified)
+
+**Terminal Commands Run:**
+- None

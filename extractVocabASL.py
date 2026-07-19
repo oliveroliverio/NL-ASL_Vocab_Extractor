@@ -50,17 +50,17 @@ def clipboard_mode():
     # Prompt for number of images
     num_images = 2
     while True:
-        val = input("Number of images (1-4, default: 2): ").strip()
+        val = input("Number of images (1-6, default: 2): ").strip()
         if not val:
             break
         try:
             num = int(val)
-            if 1 <= num <= 4:
+            if 1 <= num <= 6:
                 num_images = num
                 break
         except ValueError:
             pass
-        print("Invalid input. Please enter a number between 1 and 4, or press Enter for the default.")
+        print("Invalid input. Please enter a number between 1 and 6, or press Enter for the default.")
 
     images = []
 
