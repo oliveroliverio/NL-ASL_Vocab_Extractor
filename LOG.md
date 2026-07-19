@@ -57,3 +57,24 @@ REFACTOR: Support up to 6 images in card renderer layouts and update console pro
 
 **Terminal Commands Run:**
 - None
+
+## [FEAT] Implement coordinate-based capture with global hotkey and AppleScript input dialog
+
+**Commit Message:**
+FEAT: Implement coordinate calibration, F8 global hotkey capture, and AppleScript preview workflow
+
+- Added `pynput` as project dependency to support global hotkeys.
+- Added `.asl_vocab_coords.json` to `.gitignore`.
+- Created calibration mode (`--calibrate`) in `extractVocabASL.py` using a transparent Tkinter selection overlay.
+- Added `hotkey_mode()` to listen globally for `F8` press, taking screenshots of the calibrated region using Pillow `ImageGrab`.
+- Implemented temporary draft rendering, automatic Preview.app opening, and blocking AppleScript input popup dialog.
+- Updated documentation in `@Docs/Refactoring-ASL-Vocab-Extractor.md` with calibration and usage instructions.
+
+**Files Changed:**
+- `pyproject.toml` (Modified)
+- `.gitignore` (Modified)
+- `extractVocabASL.py` (Modified)
+- `@Docs/Refactoring-ASL-Vocab-Extractor.md` (Modified)
+
+**Terminal Commands Run:**
+- `uv sync`

@@ -67,23 +67,35 @@ We updated `src/asl_vocab/card_renderer.py` to support layout configurations for
 - **5 images**: Arranged in a 3x2 grid with the 6th slot (bottom-right) reserved for the centered vocabulary word.
 - **6 images**: Arranged in a 3x2 grid with all 6 slots filled with images and the word displayed in a dedicated text band at the bottom.
 
+### Step 8: Coordinate-Based Capture & Global Hotkey (Option B)
+We refactored `extractVocabASL.py` to use a global hotkey capture workflow:
+1. **Calibration Mode (`--calibrate`)**: Running `extractVocabASL --calibrate` opens a transparent fullscreen Tkinter window where you click-and-drag a red selection rectangle over your video player box. The `(x1, y1, x2, y2)` coordinates are saved locally to `.asl_vocab_coords.json` (ignored in `.gitignore`).
+2. **Global Hotkey listener**: When running, the script runs a background `pynput` listener. You press `F8` from inside Chrome to capture the calibrated region automatically.
+3. **Beep Indicator**: Plays a system sound (`afplay Tink.aiff`) on each capture.
+4. **Draft Preview**: Once the screenshot limit is reached, a draft layout containing the string `"PREVIEW"` is created and opened via macOS `open`.
+5. **AppleScript Input Prompt**: A native dialog box overlays on top of Chrome asking you for the vocabulary word. Once submitted, the final card is saved, the preview is closed, the clipboard is purged, and the hotkey listener resets.
+
 ---
 
 ## Usage
 
-### Run from Workspace
-To execute the tool from the project repository:
+### 1. Calibrate Screen Coordinates
+First, set up Chrome and open the video player. Run the calibration command:
 ```bash
-uv run python extractVocabASL.py
-# or
-python extractVocabASL.py
+extractVocabASL --calibrate
 ```
+Drag the box over the video player region and release.
 
-### Run from Anywhere
-You can now run the tool from any folder in your terminal:
+### 2. Run Ingestion (from anywhere)
+Start the tool from your terminal:
 ```bash
 extractVocabASL
 ```
+- Enter the number of images to capture (e.g. 2).
+- Switch to Chrome and scrub your video.
+- Press `F8` for image 1, then `F8` for image 2.
+- The Preview app will open showing the draft card.
+- An AppleScript dialog will pop up over Chrome. Type the vocabulary word and press Enter to save.
 
 For options/help:
 ```bash
