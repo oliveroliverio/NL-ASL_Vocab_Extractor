@@ -155,11 +155,17 @@ def render_card(
         positions = [pos]
         image_size = (layout.image_width, layout.image_height)
 
-        draw.text(
-            (layout.margin + 10, layout.card_height - 250),
-            word.replace("_", " "),
-            fill="black",
-            font=get_font(),
+        text_box = (
+            layout.margin,
+            550,
+            layout.card_width - layout.margin,
+            layout.card_height - layout.margin,
+        )
+        draw_centered_text(
+            draw=draw,
+            text=word,
+            box=text_box,
+            max_font_size=layout.font_size,
         )
 
     # 2 images: keep your original offset layout
@@ -183,11 +189,17 @@ def render_card(
         positions = [pos1, pos2]
         image_size = (layout.image_width, layout.image_height)
 
-        draw.text(
-            (layout.margin + 10, layout.card_height - 250),
-            word.replace("_", " "),
-            fill="black",
-            font=get_font(),
+        text_box = (
+            layout.margin,
+            layout.card_height - layout.image_height - layout.margin,
+            layout.card_width - layout.image_width - layout.margin,
+            layout.card_height - layout.margin,
+        )
+        draw_centered_text(
+            draw=draw,
+            text=word,
+            box=text_box,
+            max_font_size=layout.font_size,
         )
 
     # 3 images: two top, one bottom-left, word in bottom-right blank space

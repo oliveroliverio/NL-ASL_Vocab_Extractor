@@ -167,3 +167,17 @@ FEAT: Implement dynamic screenshot capture using F8 (capture) / F9 (finalize) an
 
 **Terminal Commands Run:**
 - None
+
+## [FEAT] Bounded text rendering in 1-image and 2-image cards for long phrases
+
+**Commit Message:**
+FEAT: Bounded text resizing in 1 and 2 image layouts to support long phrases
+
+- Replaced direct `draw.text` layout rendering in 1-image and 2-image cards with `draw_centered_text` bounding box bounds.
+- Defined bottom-center and bottom-left text bounding regions for 1-image and 2-image card layouts, allowing large phrases/sentences to auto-scale down cleanly.
+
+**Files Changed:**
+- `src/asl_vocab/card_renderer.py` (Modified)
+
+**Terminal Commands Run:**
+- None
