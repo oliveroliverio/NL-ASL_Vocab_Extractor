@@ -21,4 +21,4 @@ monitor_*.png
 # Local coordinate configuration
 .asl_vocab_coords.json
 
-
+data/
