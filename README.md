@@ -50,11 +50,11 @@ Prerequisites: `uv` (Fast Python Package Installer and Manager) and Python 3.13+
    # or locally:
    uv run python extractVocabASL.py
    ```
-   - Enter the number of images you want to use (1-6, default: 2).
    - Switch to Chrome and scrub your video.
-   - Press **`F8`** globally (while inside Chrome) to capture the calibrated region for each image. (A system beep sound will play upon each capture).
-   - Once the target number of screenshots is reached, a draft card image will automatically open in **Preview.app** for review, and a macOS dialog will pop up asking for the vocabulary word.
-   - Type the word and press `Enter` to finalize the card (or click Cancel to discard).
+   - Press **`F8`** globally (while inside Chrome) to capture the calibrated region. (A confirmation beep sound will play upon each capture).
+   - Press **`F9`** globally (while inside Chrome) to compile the card (or capture 6 images to compile automatically).
+   - Once finalized, a draft card image will automatically open in **Preview.app** for review, and a macOS dialog will pop up asking for the vocabulary word.
+   - Type the word and press `Enter` to finalize the card (or click Cancel to discard). The finalized card image and its filename will be copied to your system clipboard automatically for pasting elsewhere.
 
 4. Refresh galleries:
    To regenerate galleries from existing cards without taking new screenshots:

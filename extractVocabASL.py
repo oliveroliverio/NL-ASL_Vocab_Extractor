@@ -172,6 +172,22 @@ def play_beep():
     )
 
 
+def play_done_beep():
+    subprocess.Popen(
+        ["afplay", "/System/Library/Sounds/Glass.aiff"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+
+
+def play_error_beep():
+    subprocess.Popen(
+        ["afplay", "/System/Library/Sounds/Sosumi.aiff"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+
+
 def ask_for_word_applescript() -> str | None:
     script = (
         'display dialog "Enter the ASL word/phrase for this card (or click Cancel to discard):" '
@@ -203,21 +219,10 @@ def hotkey_mode():
         print("  extractVocabASL --calibrate\n")
         raise SystemExit(1)
 
-    print("\nASL Vocab Image Ingest (Coordinate Hotkey Mode)\n")
-
-    num_images = 2
-    while True:
-        val = input("Number of images (1-6, default: 2): ").strip()
-        if not val:
-            break
-        try:
-            num = int(val)
-            if 1 <= num <= 6:
-                num_images = num
-                break
-        except ValueError:
-            pass
-        print("Invalid input. Please enter a number between 1 and 6, or press Enter for the default.")
+    print("\nASL Vocab Image Ingest (Dynamic Coordinate Hotkey Mode)")
+    print("Press F8 inside Chrome to capture a screenshot (1 to 6 images).")
+    print("Press F9 inside Chrome to finalize and compile the card.")
+    print("Active Coordinates:", coords)
 
     captured_images = []
     lock = threading.Lock()
@@ -225,7 +230,7 @@ def hotkey_mode():
 
     def process_captured_set():
         nonlocal is_processing
-        print("\nProcessing captured set...")
+        print(f"\nProcessing captured set ({len(captured_images)} images)...")
         preview_path = Path("/tmp/asl_vocab_preview.png")
         
         try:
@@ -289,7 +294,7 @@ def hotkey_mode():
             with lock:
                 captured_images.clear()
                 is_processing = False
-                print(f"\nReady for next set. Press F8 to capture (0/{num_images})...")
+                print("\nReady for next set. Press F8 to capture, F9 to finalize (0 captured)...")
 
     def on_press(key):
         nonlocal is_processing
@@ -298,9 +303,14 @@ def hotkey_mode():
         except ImportError:
             return
 
+        # F8: Capture screenshot
         if key == keyboard.Key.f8:
             with lock:
                 if is_processing:
+                    return
+                if len(captured_images) >= 6:
+                    print("Maximum of 6 images already reached. Press F9 to finalize.")
+                    play_error_beep()
                     return
 
                 try:
@@ -308,13 +318,29 @@ def hotkey_mode():
                     img = ImageGrab.grab(bbox=coords)
                     captured_images.append(img.convert("RGB"))
                     play_beep()
-                    print(f"Captured {len(captured_images)} of {num_images}...")
+                    print(f"Captured {len(captured_images)} (max 6)...")
 
-                    if len(captured_images) == num_images:
+                    # If 6 images reached, automatically trigger processing
+                    if len(captured_images) == 6:
                         is_processing = True
+                        print("Reached maximum limit (6 images). Finalizing automatically...")
                         threading.Thread(target=process_captured_set, daemon=True).start()
                 except Exception as e:
                     print(f"Error capturing: {e}")
+
+        # F9: Finalize set
+        elif key == keyboard.Key.f9:
+            with lock:
+                if is_processing:
+                    return
+                if len(captured_images) == 0:
+                    print("No screenshots captured yet. Press F8 first.")
+                    play_error_beep()
+                    return
+                
+                is_processing = True
+                play_done_beep()
+                threading.Thread(target=process_captured_set, daemon=True).start()
 
     try:
         from pynput import keyboard
@@ -322,11 +348,10 @@ def hotkey_mode():
         print("\nError: pynput package is missing. Please run `uv sync` first.\n")
         raise SystemExit(1)
 
-    print(f"\nStarting global keyboard listener. Listening for F8 key...")
-    print(f"Active Coordinates: {coords}")
-    print("Keep Chrome active. Position the video, and press F8 to take a screenshot.")
-    print("Note: If keypresses are not detected, make sure Terminal/iTerm/IDE has Accessibility permissions.")
+    print(f"\nStarting global keyboard listener. Listening for F8 / F9 keys...")
+    print("Keep Chrome active. Press F8 to capture, F9 to compile.")
     print("Press Ctrl+C in this terminal window to stop the listener.\n")
+    print("Ready for first set. Press F8 to capture (0 captured)...")
 
     # Start the non-blocking global hotkey listener
     listener = keyboard.Listener(on_press=on_press)

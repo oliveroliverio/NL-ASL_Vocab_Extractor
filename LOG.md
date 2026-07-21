@@ -150,3 +150,20 @@ FEAT: Automatically copy generated card image and its filename to macOS system c
 
 **Terminal Commands Run:**
 - None
+
+## [FEAT] Dynamic screenshot count workflow with F8/F9 and 1-image support
+
+**Commit Message:**
+FEAT: Implement dynamic screenshot capture using F8 (capture) / F9 (finalize) and allow 1-image card layout without sequence badges
+
+- Switched ingestion workflow from a fixed size input at startup to a dynamic hotkey listener: press `F8` to capture screenshots (up to 6) and `F9` to finalize the card compilation.
+- Removed startup prompt asking for image count.
+- Added audio cues for capture (`Tink`), finalization (`Glass`), and error limits (`Sosumi`).
+- Modified `card_renderer.py` to suppress drawing the sequence number '1' badge if a card only contains a single image.
+
+**Files Changed:**
+- `extractVocabASL.py` (Modified)
+- `src/asl_vocab/card_renderer.py` (Modified)
+
+**Terminal Commands Run:**
+- None

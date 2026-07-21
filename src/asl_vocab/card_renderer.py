@@ -328,9 +328,10 @@ def render_card(
             max_font_size=layout.font_size,
         )
 
-    # Draw image numbers on top right of each image
-    for idx, pos in enumerate(positions):
-        draw_image_number(draw, idx + 1, pos, image_size)
+    # Draw image numbers on top right of each image (only if there are multiple images)
+    if len(positions) > 1:
+        for idx, pos in enumerate(positions):
+            draw_image_number(draw, idx + 1, pos, image_size)
 
     draw_border(draw)
 

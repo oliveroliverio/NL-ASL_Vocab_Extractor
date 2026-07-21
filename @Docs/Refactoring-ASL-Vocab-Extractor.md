@@ -70,10 +70,10 @@ We updated `src/asl_vocab/card_renderer.py` to support layout configurations for
 ### Step 8: Coordinate-Based Capture & Global Hotkey (Option B)
 We refactored `extractVocabASL.py` to use a global hotkey capture workflow:
 1. **Calibration Mode (`--calibrate`)**: Running `extractVocabASL --calibrate` starts a 3-second countdown, giving you time to switch focus to Chrome. After the countdown, a fullscreen dimmed screen capture Tkinter window opens where you click-and-drag a red selection rectangle over your video player box. The `(x1, y1, x2, y2)` coordinates are saved locally to `.asl_vocab_coords.json` (ignored in `.gitignore`).
-2. **Global Hotkey listener**: When running, the script runs a background `pynput` listener. You press `F8` from inside Chrome to capture the calibrated region automatically.
-3. **Beep Indicator**: Plays a system sound (`afplay Tink.aiff`) on each capture.
-4. **Draft Preview**: Once the screenshot limit is reached, a draft layout containing the string `"PREVIEW"` is created and opened via macOS `open`.
-5. **AppleScript Input Prompt**: A native dialog box overlays on top of Chrome asking you for the vocabulary word. Once submitted, the final card is saved, the preview is closed, the clipboard is purged, and the hotkey listener resets.
+2. **Global Hotkey listener**: When running, the script runs a background `pynput` listener. You press `F8` from inside Chrome to capture the calibrated region (1 to 6 images) and press `F9` to finalize and compile the card.
+3. **Beep Indicators**: Plays distinct sounds to confirm actions: `Tink` on capture (`F8`), `Glass` on finalize (`F9`), and `Sosumi` on errors or limits.
+4. **Draft Preview**: Once finalized, a draft layout containing the string `"PREVIEW"` is created and opened via macOS `open`.
+5. **AppleScript Input Prompt**: A native dialog box overlays on top of Chrome asking you for the vocabulary word. Once submitted, the final card is saved, the preview is closed, the clipboard is populated with the image/filename representation, and the hotkey listener resets.
 
 ---
 
@@ -91,9 +91,9 @@ Start the tool from your terminal:
 ```bash
 extractVocabASL
 ```
-- Enter the number of images to capture (e.g. 2).
 - Switch to Chrome and scrub your video.
-- Press `F8` for image 1, then `F8` for image 2.
+- Press `F8` to capture screenshots (1 to 6 times).
+- Press `F9` to compile the card (or capture 6 images to compile automatically).
 - The Preview app will open showing the draft card.
 - An AppleScript dialog will pop up over Chrome. Type the vocabulary word and press Enter to save.
 
