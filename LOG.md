@@ -181,3 +181,20 @@ FEAT: Bounded text resizing in 1 and 2 image layouts to support long phrases
 
 **Terminal Commands Run:**
 - None
+
+## [FEAT] Expand image card support up to 8 images and reduce layout padding
+
+**Commit Message:**
+FEAT: Support up to 8 images per card layout and reduce margin padding between tiles
+
+- Expanded `render_card` and `extractVocabASL.py` to support 1 to 8 images per card (with 4x2 grid layouts for 7 and 8 image sets).
+- Reduced layout margin from 45px to 20px and added a tight 14px grid gap to minimize white dead space between images while preserving full image aspect ratios without cropping.
+
+**Files Changed:**
+- `src/asl_vocab/config.py` (Modified)
+- `src/asl_vocab/card_renderer.py` (Modified)
+- `extractVocabASL.py` (Modified)
+- `README.md` (Modified)
+
+**Terminal Commands Run:**
+- None

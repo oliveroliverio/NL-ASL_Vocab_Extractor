@@ -87,11 +87,11 @@ def draw_image_number(
     x = pos[0] + size[0]
     y = pos[1]
 
-    # Badge radius / size
-    radius = 18
+    # Badge radius / size (scaled slightly if tile is small)
+    radius = 16 if size[0] < 300 else 18
     # Center of the circle: offset slightly inside the top-right corner of the image
-    center_x = x - radius - 12
-    center_y = y + radius + 12
+    center_x = x - radius - 8
+    center_y = y + radius + 8
 
     # Draw filled circle with border
     draw.ellipse(
@@ -101,8 +101,8 @@ def draw_image_number(
         width=2,
     )
 
-    # Use Arial Bold or custom font size 22
-    font = get_font(22)
+    font_sz = 18 if size[0] < 300 else 22
+    font = get_font(font_sz)
 
     # Draw the number text centered in the circle
     text = str(number)
@@ -123,8 +123,8 @@ def render_card(
 ) -> Path:
     layout = ASL_VOCAB_LAYOUT
 
-    if len(images) not in {1, 2, 3, 4, 5, 6}:
-        raise ValueError("render_card supports 1, 2, 3, 4, 5, or 6 images.")
+    if len(images) not in {1, 2, 3, 4, 5, 6, 7, 8}:
+        raise ValueError("render_card supports 1, 2, 3, 4, 5, 6, 7, or 8 images.")
 
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -140,26 +140,25 @@ def render_card(
     positions = []
     image_size = (0, 0)
 
-    # 1 image: centered, old behavior
-    if len(loaded_images) == 1:
-        img = fit_image(
-            loaded_images[0],
-            (layout.image_width, layout.image_height),
-        )
+    m = layout.margin
+    gap = getattr(layout, "gap", 14)
 
-        pos = (
-            (layout.card_width - layout.image_width) // 2,
-            140,
-        )
+    # 1 image: centered large image
+    if len(loaded_images) == 1:
+        tile_w = layout.card_width - (m * 2)
+        tile_h = 600
+        img = fit_image(loaded_images[0], (tile_w, tile_h))
+
+        pos = (m, m)
         card.paste(img, pos)
         positions = [pos]
-        image_size = (layout.image_width, layout.image_height)
+        image_size = (tile_w, tile_h)
 
         text_box = (
-            layout.margin,
-            550,
-            layout.card_width - layout.margin,
-            layout.card_height - layout.margin,
+            m,
+            m + tile_h + gap,
+            layout.card_width - m,
+            layout.card_height - m,
         )
         draw_centered_text(
             draw=draw,
@@ -168,7 +167,7 @@ def render_card(
             max_font_size=layout.font_size,
         )
 
-    # 2 images: keep your original offset layout
+    # 2 images: offset diagonal layout
     elif len(loaded_images) == 2:
         img1 = fit_image(
             loaded_images[0],
@@ -179,10 +178,10 @@ def render_card(
             (layout.image_width, layout.image_height),
         )
 
-        pos1 = (layout.margin, layout.margin)
+        pos1 = (m, m)
         pos2 = (
-            layout.card_width - layout.image_width - layout.margin,
-            layout.card_height - layout.image_height - layout.margin,
+            layout.card_width - layout.image_width - m,
+            layout.card_height - layout.image_height - m,
         )
         card.paste(img1, pos1)
         card.paste(img2, pos2)
@@ -190,10 +189,10 @@ def render_card(
         image_size = (layout.image_width, layout.image_height)
 
         text_box = (
-            layout.margin,
-            layout.card_height - layout.image_height - layout.margin,
-            layout.card_width - layout.image_width - layout.margin,
-            layout.card_height - layout.margin,
+            m,
+            layout.card_height - layout.image_height - m,
+            layout.card_width - layout.image_width - m - gap,
+            layout.card_height - m,
         )
         draw_centered_text(
             draw=draw,
@@ -204,13 +203,13 @@ def render_card(
 
     # 3 images: two top, one bottom-left, word in bottom-right blank space
     elif len(loaded_images) == 3:
-        tile_w = (layout.card_width - (layout.margin * 3)) // 2
-        tile_h = (layout.card_height - (layout.margin * 3)) // 2
+        tile_w = (layout.card_width - (m * 2) - gap) // 2
+        tile_h = (layout.card_height - (m * 2) - gap) // 2
 
         positions = [
-            (layout.margin, layout.margin),
-            (layout.margin * 2 + tile_w, layout.margin),
-            (layout.margin, layout.margin * 2 + tile_h),
+            (m, m),
+            (m + tile_w + gap, m),
+            (m, m + tile_h + gap),
         ]
         image_size = (tile_w, tile_h)
 
@@ -219,10 +218,10 @@ def render_card(
             card.paste(img, pos)
 
         text_box = (
-            layout.margin * 2 + tile_w,
-            layout.margin * 2 + tile_h,
-            layout.margin * 2 + tile_w + tile_w,
-            layout.margin * 2 + tile_h + tile_h,
+            m + tile_w + gap,
+            m + tile_h + gap,
+            layout.card_width - m,
+            layout.card_height - m,
         )
 
         draw_centered_text(
@@ -234,20 +233,16 @@ def render_card(
 
     # 4 images: 2x2 grid, word at bottom
     elif len(loaded_images) == 4:
-        text_band_h = 130
+        text_band_h = 100
 
-        tile_w = (layout.card_width - (layout.margin * 3)) // 2
-        tile_h = (
-            layout.card_height
-            - text_band_h
-            - (layout.margin * 3)
-        ) // 2
+        tile_w = (layout.card_width - (m * 2) - gap) // 2
+        tile_h = (layout.card_height - text_band_h - (m * 2) - gap) // 2
 
         positions = [
-            (layout.margin, layout.margin),
-            (layout.margin * 2 + tile_w, layout.margin),
-            (layout.margin, layout.margin * 2 + tile_h),
-            (layout.margin * 2 + tile_w, layout.margin * 2 + tile_h),
+            (m, m),
+            (m + tile_w + gap, m),
+            (m, m + tile_h + gap),
+            (m + tile_w + gap, m + tile_h + gap),
         ]
         image_size = (tile_w, tile_h)
 
@@ -256,10 +251,10 @@ def render_card(
             card.paste(img, pos)
 
         text_box = (
-            layout.margin,
+            m,
             layout.card_height - text_band_h,
-            layout.card_width - layout.margin,
-            layout.card_height - layout.margin,
+            layout.card_width - m,
+            layout.card_height - m,
         )
 
         draw_centered_text(
@@ -271,15 +266,15 @@ def render_card(
 
     # 5 images: 3x2 grid, bottom-right blank space used for the word
     elif len(loaded_images) == 5:
-        tile_w = (layout.card_width - (layout.margin * 4)) // 3
-        tile_h = (layout.card_height - (layout.margin * 3)) // 2
+        tile_w = (layout.card_width - (m * 2) - (gap * 2)) // 3
+        tile_h = (layout.card_height - (m * 2) - gap) // 2
 
         positions = [
-            (layout.margin, layout.margin),
-            (layout.margin * 2 + tile_w, layout.margin),
-            (layout.margin * 3 + tile_w * 2, layout.margin),
-            (layout.margin, layout.margin * 2 + tile_h),
-            (layout.margin * 2 + tile_w, layout.margin * 2 + tile_h),
+            (m, m),
+            (m + tile_w + gap, m),
+            (m + (tile_w * 2) + (gap * 2), m),
+            (m, m + tile_h + gap),
+            (m + tile_w + gap, m + tile_h + gap),
         ]
         image_size = (tile_w, tile_h)
 
@@ -288,10 +283,10 @@ def render_card(
             card.paste(img, pos)
 
         text_box = (
-            layout.margin * 3 + tile_w * 2,
-            layout.margin * 2 + tile_h,
-            layout.card_width - layout.margin,
-            layout.card_height - layout.margin,
+            m + (tile_w * 2) + (gap * 2),
+            m + tile_h + gap,
+            layout.card_width - m,
+            layout.card_height - m,
         )
 
         draw_centered_text(
@@ -303,22 +298,18 @@ def render_card(
 
     # 6 images: 3x2 grid, word in bottom text band
     elif len(loaded_images) == 6:
-        text_band_h = 120
+        text_band_h = 100
 
-        tile_w = (layout.card_width - (layout.margin * 4)) // 3
-        tile_h = (
-            layout.card_height
-            - text_band_h
-            - (layout.margin * 3)
-        ) // 2
+        tile_w = (layout.card_width - (m * 2) - (gap * 2)) // 3
+        tile_h = (layout.card_height - text_band_h - (m * 2) - gap) // 2
 
         positions = [
-            (layout.margin, layout.margin),
-            (layout.margin * 2 + tile_w, layout.margin),
-            (layout.margin * 3 + tile_w * 2, layout.margin),
-            (layout.margin, layout.margin * 2 + tile_h),
-            (layout.margin * 2 + tile_w, layout.margin * 2 + tile_h),
-            (layout.margin * 3 + tile_w * 2, layout.margin * 2 + tile_h),
+            (m, m),
+            (m + tile_w + gap, m),
+            (m + (tile_w * 2) + (gap * 2), m),
+            (m, m + tile_h + gap),
+            (m + tile_w + gap, m + tile_h + gap),
+            (m + (tile_w * 2) + (gap * 2), m + tile_h + gap),
         ]
         image_size = (tile_w, tile_h)
 
@@ -327,10 +318,81 @@ def render_card(
             card.paste(img, pos)
 
         text_box = (
-            layout.margin,
+            m,
             layout.card_height - text_band_h,
-            layout.card_width - layout.margin,
-            layout.card_height - layout.margin,
+            layout.card_width - m,
+            layout.card_height - m,
+        )
+
+        draw_centered_text(
+            draw=draw,
+            text=word,
+            box=text_box,
+            max_font_size=layout.font_size,
+        )
+
+    # 7 images: 4x2 grid, bottom-right blank space used for the word
+    elif len(loaded_images) == 7:
+        tile_w = (layout.card_width - (m * 2) - (gap * 3)) // 4
+        tile_h = (layout.card_height - (m * 2) - gap) // 2
+
+        positions = [
+            (m, m),
+            (m + tile_w + gap, m),
+            (m + (tile_w * 2) + (gap * 2), m),
+            (m + (tile_w * 3) + (gap * 3), m),
+            (m, m + tile_h + gap),
+            (m + tile_w + gap, m + tile_h + gap),
+            (m + (tile_w * 2) + (gap * 2), m + tile_h + gap),
+        ]
+        image_size = (tile_w, tile_h)
+
+        for img_source, pos in zip(loaded_images, positions):
+            img = fit_image(img_source, (tile_w, tile_h))
+            card.paste(img, pos)
+
+        text_box = (
+            m + (tile_w * 3) + (gap * 3),
+            m + tile_h + gap,
+            layout.card_width - m,
+            layout.card_height - m,
+        )
+
+        draw_centered_text(
+            draw=draw,
+            text=word,
+            box=text_box,
+            max_font_size=layout.font_size,
+        )
+
+    # 8 images: 4x2 grid, word in bottom text band
+    elif len(loaded_images) == 8:
+        text_band_h = 90
+
+        tile_w = (layout.card_width - (m * 2) - (gap * 3)) // 4
+        tile_h = (layout.card_height - text_band_h - (m * 2) - gap) // 2
+
+        positions = [
+            (m, m),
+            (m + tile_w + gap, m),
+            (m + (tile_w * 2) + (gap * 2), m),
+            (m + (tile_w * 3) + (gap * 3), m),
+            (m, m + tile_h + gap),
+            (m + tile_w + gap, m + tile_h + gap),
+            (m + (tile_w * 2) + (gap * 2), m + tile_h + gap),
+            (m + (tile_w * 3) + (gap * 3), m + tile_h + gap),
+        ]
+        image_size = (tile_w, tile_h)
+
+        for img_source, pos in zip(loaded_images, positions):
+            img = fit_image(img_source, (tile_w, tile_h))
+            card.paste(img, pos)
+
+        text_box = (
+            m,
+            layout.card_height - text_band_h,
+            layout.card_width - m,
+            layout.card_height - m,
         )
 
         draw_centered_text(

@@ -220,7 +220,7 @@ def hotkey_mode():
         raise SystemExit(1)
 
     print("\nASL Vocab Image Ingest (Dynamic Coordinate Hotkey Mode)")
-    print("Press F8 inside Chrome to capture a screenshot (1 to 6 images).")
+    print("Press F8 inside Chrome to capture a screenshot (1 to 8 images).")
     print("Press F9 inside Chrome to finalize and compile the card.")
     print("Active Coordinates:", coords)
 
@@ -308,8 +308,8 @@ def hotkey_mode():
             with lock:
                 if is_processing:
                     return
-                if len(captured_images) >= 6:
-                    print("Maximum of 6 images already reached. Press F9 to finalize.")
+                if len(captured_images) >= 8:
+                    print("Maximum of 8 images already reached. Press F9 to finalize.")
                     play_error_beep()
                     return
 
@@ -318,12 +318,12 @@ def hotkey_mode():
                     img = ImageGrab.grab(bbox=coords)
                     captured_images.append(img.convert("RGB"))
                     play_beep()
-                    print(f"Captured {len(captured_images)} (max 6)...")
+                    print(f"Captured {len(captured_images)} (max 8)...")
 
-                    # If 6 images reached, automatically trigger processing
-                    if len(captured_images) == 6:
+                    # If 8 images reached, automatically trigger processing
+                    if len(captured_images) == 8:
                         is_processing = True
-                        print("Reached maximum limit (6 images). Finalizing automatically...")
+                        print("Reached maximum limit (8 images). Finalizing automatically...")
                         threading.Thread(target=process_captured_set, daemon=True).start()
                 except Exception as e:
                     print(f"Error capturing: {e}")

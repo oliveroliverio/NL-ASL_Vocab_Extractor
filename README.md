@@ -3,10 +3,10 @@
 This is a standalone tool extracted from the `L-Mnemo2` project. It is designed to capture screenshots of sign language from the clipboard, construct flashcard images (by layouts), and automatically update Markdown galleries representing vocabulary sheets.
 
 ## Rationale & Goal
-Managing vocabulary flashcards manually is slow and error-prone. This tool automates the creation of cards with 1 to 6 images, automatically scaling and drawing the word on the card, and dynamically maintaining visual galleries that can be viewed directly in markdown viewers (like GitHub or Obsidian).
+Managing vocabulary flashcards manually is slow and error-prone. This tool automates the creation of cards with 1 to 8 images, automatically scaling and drawing the word on the card with minimal dead space, and dynamically maintaining visual galleries that can be viewed directly in markdown viewers (like GitHub or Obsidian).
 
 ## Main Features
-- **Flexible Image Layouts**: Supports layouts for 1, 2, 3, 4, 5, or 6 images on a single card.
+- **Flexible Image Layouts**: Supports layouts for 1, 2, 3, 4, 5, 6, 7, or 8 images on a single card with compact padding.
 - **Clipboard Integration**: Grabs screenshots directly from the clipboard (`Shift-Control-Command-4` on macOS).
 - **Auto-slugification**: Creates filenames automatically based on unit number, word/phrase slug, and timestamp.
 - **Dynamic Gallery Generation**: Automatically generates and updates index galleries and unit-specific galleries.
@@ -52,7 +52,7 @@ Prerequisites: `uv` (Fast Python Package Installer and Manager) and Python 3.13+
    ```
    - Switch to Chrome and scrub your video.
    - Press **`F8`** globally (while inside Chrome) to capture the calibrated region. (A confirmation beep sound will play upon each capture).
-   - Press **`F9`** globally (while inside Chrome) to compile the card (or capture 6 images to compile automatically).
+   - Press **`F9`** globally (while inside Chrome) to compile the card (or capture 8 images to compile automatically).
    - Once finalized, a draft card image will automatically open in **Preview.app** for review, and a macOS dialog will pop up asking for the vocabulary word.
    - Type the word and press `Enter` to finalize the card (or click Cancel to discard). The finalized card image and its filename will be copied to your system clipboard automatically for pasting elsewhere.
 
